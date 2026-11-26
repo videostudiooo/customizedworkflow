@@ -459,7 +459,8 @@ workflows/
 - 提交文件数：34
 - 本地 tree 与远端 tree 完全一致。
 - 文档复核提交：`7b0f28d747455f61099a58c06340681002084ec5`
-- 本地镜像提交：`14eea4a5df92b19a76ce3b3f7c8cb96545b7bc07`
+- 负向路由复核提交：`923fbc6c8ec50ce00e23292ca9d5896b5731c016`
+- 本地镜像提交：`244401d2aea0f892fa37d273e8da1ce99dbb6b59`
 - 复核前本地与远端 tree：`ac29ddf3bb7c92408810d62e79cb9623f5309878`
 
 远端已重新读取并验证：
@@ -510,4 +511,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "F:\AI-Video-Studio\scripts\
 
 核心目标是真实可行的：一个在 F 盘之外启动、没有前序背景的新 Codex Thread，能够仅凭自然语言需求，自动进入 AI Video Studio 工作流、调用 Agentcut MCP、创建独立工程、完成预览与渲染，并在重启后恢复项目。
 
-剩余限制集中在本地页面自动化安全校验、首渲染浏览器回退和尚未覆盖的负向路由模型测试，不影响当前主流程运行。
+剩余限制集中在本地页面自动化安全校验、首渲染浏览器回退和更复杂边界情况下的路由稳定性，不影响当前主流程运行。
