@@ -1,0 +1,15 @@
+interface:
+  display_name: "AI Video Studio"
+  short_description: "Create and edit videos with Agentcut"
+  brand_color: "#0B84F3"
+  default_prompt: "Use $ai-video-studio to turn this brief and these assets into an editable, reviewed video."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "agentcut"
+      description: "Agentcut local editing, preview and render tools"
+      transport: "stdio"
+
+policy:
+  allow_implicit_invocation: true
