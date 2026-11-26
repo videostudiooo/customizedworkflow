@@ -128,6 +128,12 @@ if (-not $StudioPage) {
     throw 'Studio is running, but the controlled browser has not opened it.'
 }
 
+$State.helperPid = Get-NetTCPConnection -LocalAddress 127.0.0.1 -LocalPort 32118 -State Listen |
+    Select-Object -First 1 -ExpandProperty OwningProcess
+$State.studioPid = Get-NetTCPConnection -LocalAddress 127.0.0.1 -LocalPort 3000 -State Listen |
+    Select-Object -First 1 -ExpandProperty OwningProcess
+$State.browserPid = Get-NetTCPConnection -LocalAddress 127.0.0.1 -LocalPort $BrowserPort -State Listen |
+    Select-Object -First 1 -ExpandProperty OwningProcess
 $State.updatedAt = (Get-Date).ToString('o')
 $State | ConvertTo-Json -Depth 3 | Set-Content -LiteralPath $StatePath -Encoding utf8
 $State | ConvertTo-Json -Depth 3
