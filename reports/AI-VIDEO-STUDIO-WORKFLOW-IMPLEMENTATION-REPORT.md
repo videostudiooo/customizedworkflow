@@ -369,6 +369,7 @@ scripts/
   cleanup-cache.ps1
   ensure-agentcut-services.ps1
   install-codex-integration.ps1
+  publish-github.ps1
   verify-workflow.ps1
 skills/
   ai-video-studio/
@@ -429,11 +430,25 @@ workflows/
 
 ## 9. GitHub 提交与远端验证
 
-本报告初次生成时待执行远端提交。提交完成后会追加：
+主实现已提交并推送。
 
-- 提交 SHA。
-- 远端提交 URL。
-- 远端文件读取验证结果。
+- 初始远端提交：`ec9c86260d8754ded41dca3ef20f28343a6aa8e3`
+- 主实现提交：`c2adc851f882c6cdcc3b73091bb9ae274c219e12`
+- 提交 URL：
+  [c2adc851](https://github.com/videostudiooo/customizedworkflow/commit/c2adc851f882c6cdcc3b73091bb9ae274c219e12)
+- 远端 tree：`0cb553d8fd519ed7346d0733395f36225c75a5ed`
+- 本地 Git tree：`0cb553d8fd519ed7346d0733395f36225c75a5ed`
+- 提交文件数：34
+- 本地 tree 与远端 tree 完全一致。
+
+远端已重新读取并验证：
+
+- `skills/ai-video-studio/SKILL.md` 内容存在且可读。
+- `scripts/ensure-agentcut-services.ps1` 内容存在且可读。
+- 本实施报告存在且可读。
+- GitHub 提交历史中主实现提交位于初始提交之后。
+
+Git 的直连 fetch/push 在当前网络下仍受 Git TLS 握手限制，因此远端提交通过已授权的 GitHub API 写入；落盘前已检查暂存 diff、空白错误、树哈希和敏感信息。该传输限制不影响本地仓库、远端内容或提交记录。
 
 ## 10. 当前限制与风险
 
