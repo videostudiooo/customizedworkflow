@@ -27,7 +27,9 @@ if (Test-Path -LiteralPath $SkillTarget) {
     if ($Existing.LinkType -ne 'Junction') {
         throw "Skill target exists and is not the managed junction: $SkillTarget"
     }
-    if ((Resolve-Path -LiteralPath $SkillTarget).Path -ne (Resolve-Path -LiteralPath $SkillSource).Path) {
+    $ExistingTarget = @($Existing.Target) | Select-Object -First 1
+    if (-not $ExistingTarget -or
+        (Resolve-Path -LiteralPath $ExistingTarget).Path -ne (Resolve-Path -LiteralPath $SkillSource).Path) {
         throw "Skill junction points to an unexpected target: $SkillTarget"
     }
 } else {
@@ -65,8 +67,8 @@ $McpStart
 [mcp_servers.agentcut]
 enabled = true
 required = false
-command = 'F:\AI-Video-Studio\software\node\node.exe'
-args = ['F:\AI-Video-Studio\software\agentcut-helper\node_modules\agentcut\dist\index.js']
+command = 'cmd.exe'
+args = ['/d', '/s', '/c', 'call', 'F:\AI-Video-Studio\scripts\agentcut-mcp.cmd']
 env = { AGENTCUT_WORKSPACE = 'F:\AI-Video-Studio', AGENTCUT_PORT = '32118' }
 cwd = 'F:\AI-Video-Studio'
 startup_timeout_sec = 60

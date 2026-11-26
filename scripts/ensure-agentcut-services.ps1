@@ -64,6 +64,13 @@ if (-not (Test-LocalPort 32118)) {
         -WorkingDirectory $Root -WindowStyle Hidden `
         -RedirectStandardOutput $Out -RedirectStandardError $Err -PassThru
     $State.helperPid = $Process.Id
+} else {
+    $OwnerPid = (Get-NetTCPConnection -LocalAddress 127.0.0.1 -LocalPort 32118 -State Listen -ErrorAction Stop |
+        Select-Object -First 1 -ExpandProperty OwningProcess)
+    $Owner = Get-CimInstance Win32_Process -Filter "ProcessId=$OwnerPid" -ErrorAction SilentlyContinue
+    if (-not $Owner -or $Owner.ExecutablePath -ne $Node -or $Owner.CommandLine -notlike "*$HelperCli*") {
+        throw "Port 32118 is owned by an incompatible process. Close the stale Agentcut/Codex MCP process and retry. PID=$OwnerPid"
+    }
 }
 
 if (-not (Wait-LocalPort 32118 30)) {

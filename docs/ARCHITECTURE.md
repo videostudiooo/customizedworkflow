@@ -24,7 +24,17 @@ progressive-disclosure references.
 `F:\CodexHome\config.toml` registers the standard-input/output Agentcut MCP
 server under the name `agentcut`.
 
-Stable server executable:
+Codex first runs the idempotent service wrapper:
+
+```text
+F:\AI-Video-Studio\scripts\agentcut-mcp.cmd
+```
+
+The wrapper verifies Helper, Studio and the controlled page before starting the
+stable MCP server. This prevents a partial MCP process from claiming port 32118
+before the full Helper is available.
+
+Stable MCP entry:
 
 ```text
 F:\AI-Video-Studio\software\agentcut-helper\node_modules\agentcut\dist\index.js

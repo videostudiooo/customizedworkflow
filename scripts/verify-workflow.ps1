@@ -23,6 +23,7 @@ $GlobalMcpVisible = $PromptInput.Contains('agentcut_capabilities')
     GlobalAgentsExists = Test-Path -LiteralPath $GlobalAgents
     GlobalRouterInstalled = if (Test-Path -LiteralPath $GlobalAgents) { (Get-Content -LiteralPath $GlobalAgents -Raw).Contains('BEGIN AI Video Studio Router') } else { $false }
     McpConfigInstalled = (Get-Content -LiteralPath $ConfigPath -Raw).Contains('[mcp_servers.agentcut]')
+    StableMcpWrapperConfigured = (Get-Content -LiteralPath $ConfigPath -Raw).Contains('scripts\agentcut-mcp.cmd')
     AgentcutConfigured = $AgentcutConfigured
     SkillMetadataInPrompt = $SkillDiscovered
     RouterInPrompt = $RouterDiscovered

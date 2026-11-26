@@ -190,8 +190,8 @@ agentcut
 [mcp_servers.agentcut]
 enabled = true
 required = false
-command = 'F:\AI-Video-Studio\software\node\node.exe'
-args = ['F:\AI-Video-Studio\software\agentcut-helper\node_modules\agentcut\dist\index.js']
+command = 'cmd.exe'
+args = ['/d', '/s', '/c', 'call', 'F:\AI-Video-Studio\scripts\agentcut-mcp.cmd']
 env = { AGENTCUT_WORKSPACE = 'F:\AI-Video-Studio', AGENTCUT_PORT = '32118' }
 cwd = 'F:\AI-Video-Studio'
 startup_timeout_sec = 60
@@ -202,6 +202,24 @@ supports_parallel_tool_calls = false
 `codex mcp list --json` 已确认 `agentcut` 注册且启用。
 
 普通 Thread 不再依赖 Agentcut 启动时的临时 MCP 注入。
+
+### 4.3 冷启动包装入口
+
+`scripts\agentcut-mcp.cmd` 是 Codex 启动全局 MCP 时实际调用的稳定命令：
+
+1. 先执行 `ensure-agentcut-services.ps1`。
+2. Helper、生产 Studio 和受控页面都健康后，再启动 Node MCP。
+3. 把标准输入输出直接交给 Node 进程，避免 PowerShell 包装层破坏 MCP 协议。
+
+这解决了“Codex 先启动、Helper 尚未运行”时，一个不完整 MCP 进程先占用 32118 的风险。
+
+独立 MCP 客户端冷启动测试结果：
+
+- 61 个 Agentcut 工具成功列出；
+- `agentcut_status` 调用成功；
+- workspace 为 `F:\AI-Video-Studio`；
+- Studio 页面已连接；
+- 项目 `workflow-cross-thread-test` 状态有效。
 
 ## 5. Helper 与 Studio 运行机制
 
@@ -352,6 +370,28 @@ workflow-cross-thread-test-wide-20261126-164140-720p-local.mp4
 
 这验证了全局路由没有把所有提到“视频”的问题强制送入制作流程。
 
+### 6.8 最终 MCP 冷启动验证
+
+在关闭 Helper、Studio 和受控浏览器后，创建另一个全新的 Codex Thread：
+
+- Thread：`AI Video Studio MCP 冷启动验证`
+- ID：`01a218ce-7021-7e01-ae2a-05b3f5de77f7`
+- 启动目录：`E:\Codex\Workspaces\2026-11-27\ai-video-mcp-cold-start`
+
+用户只要求调用 `agentcut_status`，没有提供任何配置背景。
+
+结果：
+
+- 新 Thread 自动发现用户级 Agentcut MCP；
+- 包装入口自行启动完整 Helper、生产 Studio 和受控浏览器；
+- `agentcut_status` 成功完成；
+- MCP 版本 0.2.33；
+- workspace 为 `F:\AI-Video-Studio`；
+- Studio 页面已连接；
+- 当前项目能以 wide 预览打开，且没有构建或校验错误。
+
+该测试确认最终 MCP 配置不依赖预先运行的手工终端或易变 npx 路径。
+
 ## 7. 仓库与文件变更
 
 远端仓库：
@@ -387,6 +427,7 @@ scripts/
   cleanup-cache.ps1
   ensure-agentcut-services.ps1
   install-codex-integration.ps1
+  agentcut-mcp.cmd
   publish-github.ps1
   verify-workflow.ps1
 skills/
@@ -460,7 +501,8 @@ workflows/
 - 本地 tree 与远端 tree 完全一致。
 - 文档复核提交：`7b0f28d747455f61099a58c06340681002084ec5`
 - 负向路由复核提交：`923fbc6c8ec50ce00e23292ca9d5896b5731c016`
-- 本地镜像提交：`244401d2aea0f892fa37d273e8da1ce99dbb6b59`
+- 最终验收报告提交：`68465326d9b48afcdd3fb09964adf4598c0002db`
+- 本地镜像提交：`9f9ffd0371d54fcd03b98c5393fbe1e5cdac7fde`
 - 复核前本地与远端 tree：`ac29ddf3bb7c92408810d62e79cb9623f5309878`
 
 远端已重新读取并验证：
@@ -481,6 +523,7 @@ Git 的直连 fetch/push 在当前网络下仍受 Git TLS 握手限制，因此�
 5. Agentcut 的 headless shell 在本机第一次渲染可能崩溃，随后会自动使用完整 Chrome。增加了首渲染时间和约 440 MB 浏览器依赖。
 6. 一项独立 Thread 正向验收和一项独立 CLI 负向路由测试已通过。更复杂的多语言、含视频上下文但实际只要求代码的边界仍应通过日常使用逐步积累测试。
 7. Remotion 的商业许可独立于 Agentcut 的 MIT 许可证，正式商业使用仍需核对组织资格。
+8. Codex 启动时有一个 Agentcut 工具定义出现非阻塞 schema 警告；本次验收涉及的创建、读写、抓帧、预览和 QA 工具均可正常使用。
 
 ## 11. 日常使用方法
 
