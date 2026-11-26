@@ -15,7 +15,6 @@ $AgentcutConfigured = [bool]($Mcp | Where-Object { $_.name -eq 'agentcut' -or $_
 $PromptInput = & $Codex debug prompt-input '帮我制作一个视频' 2>$null | Out-String
 $SkillDiscovered = $PromptInput.Contains('ai-video-studio')
 $RouterDiscovered = $PromptInput.Contains('AI Video Studio')
-$GlobalMcpVisible = $PromptInput.Contains('agentcut_capabilities')
 
 [pscustomobject]@{
     SkillTargetExists = Test-Path -LiteralPath $SkillTarget
@@ -24,10 +23,10 @@ $GlobalMcpVisible = $PromptInput.Contains('agentcut_capabilities')
     GlobalRouterInstalled = if (Test-Path -LiteralPath $GlobalAgents) { (Get-Content -LiteralPath $GlobalAgents -Raw).Contains('BEGIN AI Video Studio Router') } else { $false }
     McpConfigInstalled = (Get-Content -LiteralPath $ConfigPath -Raw).Contains('[mcp_servers.agentcut]')
     StableMcpWrapperConfigured = (Get-Content -LiteralPath $ConfigPath -Raw).Contains('scripts\agentcut-mcp.cmd')
+    McpWrapperExists = Test-Path -LiteralPath (Join-Path $Root 'scripts\agentcut-mcp.cmd')
     AgentcutConfigured = $AgentcutConfigured
     SkillMetadataInPrompt = $SkillDiscovered
     RouterInPrompt = $RouterDiscovered
-    McpToolsInPrompt = $GlobalMcpVisible
     HelperListening = [bool](Get-NetTCPConnection -LocalAddress 127.0.0.1 -LocalPort 32118 -State Listen -ErrorAction SilentlyContinue)
     StudioListening = [bool](Get-NetTCPConnection -LocalAddress 127.0.0.1 -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue)
     ControlledBrowserListening = [bool](Get-NetTCPConnection -LocalAddress 127.0.0.1 -LocalPort 9223 -State Listen -ErrorAction SilentlyContinue)
